@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { IUser } from "../../../../types/users";
+import type { IUser } from "@/types/users";
 
 const ItemUser: React.FC<{
   data: IUser;

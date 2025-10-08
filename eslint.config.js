@@ -19,5 +19,17 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          project: ['./tsconfig.json', './tsconfig.app.json'] // include any tsconfig references you use
+        },
+        alias: {
+          map: [['@', './src']],
+          extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
+        }
+      }
+    }
+
   },
 ])

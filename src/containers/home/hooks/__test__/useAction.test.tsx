@@ -2,12 +2,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { UserServices } from '../../../../services/users';
+import { UserServices } from '@/services/users';
 import { useActions } from '../useActions';
-import type { IUser } from '../../../../types/users';
+import type { IUser } from '@/types/users';
 
 
-vi.mock('../../../../services/users', () => {
+vi.mock('@/services/users', () => {
   return {
     UserServices: {
       getUsers: {

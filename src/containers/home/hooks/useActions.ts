@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
-import { UserServices } from "../../../services/users";
+import { UserServices } from "@/services/users";
 
 export const useActions = () => {
   const [username, setUsername] = useState<string>('');
@@ -27,6 +27,7 @@ export const useActions = () => {
       return nextPage <= maxPages ? nextPage : undefined;
     },
     enabled: !!username,
+    refetchOnWindowFocus: false,
   });
 
 

@@ -1,7 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { UserServices } from "../../../../services/users";
 import { Icon } from "@iconify-icon/react";
-import { formatDistanceToNow } from "../../../../lib/date";
+import { useQuery } from "@tanstack/react-query";
+import Skeleton from "@/components/ui/skeleton";
+import { formatDistanceToNow } from "@/lib/date";
+import { UserServices } from "@/services/users";
+import type { IUserDetail } from "@/types/users";
+import { NO_DATA } from "@/constants/negative-case";
+import { NegativeCase } from "@/components/fragments/negative-case";
+
 const ModalUser: React.FC<{
   login: string;
   onClose: () => void;
@@ -19,52 +24,86 @@ const ModalUser: React.FC<{
     enabled: !!login
   })
 
-
-  if (isPending) return <div>Loading...</div>
-  if (!data) return <div>No data</div>
   return (
-    <div
-      className="fixed bottom-0 left-0 w-full h-full bg-[rgba(0,0,0,0.3)] z-30 flex items-end backdrop-blur-sm">
-      <div
-        className="bg-white rounded-t-2xl p-4 pt-16 h-[80vh] w-full overflow-y-hidden relative"
-      >
-        <div className="absolute top-4 right-4 p-2 rounded-full cursor-pointer"
-          onClick={() => onClose()}
-        >
-          <Icon icon="material-symbols:close" width={16} height={16} />
-        </div>
-        <div className="flex gap-3">
-          <img src={data.avatar_url || ""} alt={data.avatar_url || ""} className="aspect-square object-cover w-12 h-12" />
-          <div>
-            <h1 className="font-semibold">{data.name}</h1>
-            <p>{data.bio}</p>
-          </div>
-        </div>
-        <div className="flex justify-between mt-4">
-          <IconText icon="mingcute:location-line" text={data.location || "N/A"} />
-          <div className="flex gap-4">
-            <IconText icon="meteor-icons:bookmark-alt" text={data.public_repos || 0} />
-            <IconText icon="mynaui:users" text={data.followers || 0} />
-          </div>
-        </div>
-        <p className="mt-24 text-sm">Repositories</p>
-        <div className="h-full overflow-y-auto">
-          {isPendingRepos && <div>Loading repos...</div>}
-          {repos && repos.length === 0 && <div>No repos found</div>}
-          {repos && repos.length > 0 && (
-            <ul>
-              {repos.map(repo => (
-                <RepoItem key={repo.id} name={repo.name} description={repo.description || ""} updatedAt={repo.updated_at} />
-              ))}
-            </ul>
+    <div className="fixed bottom-0 left-0 w-full h-full bg-[rgba(0,0,0,0.3)] z-30 flex items-end backdrop-blur-sm">
+      <div className="bg-white rounded-t-2xl p-4 pt-16 h-[80vh] w-full overflow-y-hidden relative container mx-auto flex flex-col overflow-hidden">
+        <Icon icon="material-symbols:close" width={16} height={16} className="absolute top-4 right-4 p-2 rounded-full cursor-pointer" onClick={() => onClose()} />
+        {!data ? <NegativeCase
+          title={NO_DATA.title}
+          subtitle={NO_DATA.subtitle}
+          image={NO_DATA.image}
+        />
+          : (
+            <>
+              {isPending ? <UserInfoLoading /> : <UserInfo data={data} />}
+              <p className="mt-24 text-sm">Repositories</p>
+              <div className="flex-1 overflow-y-auto my-8">
+                {isPendingRepos && <RepoLoading />}
+                {repos && repos.length === 0 &&
+                  <NegativeCase
+                    title={NO_DATA.title}
+                    subtitle={NO_DATA.subtitle}
+                    image={NO_DATA.image}
+                  />}
+                {repos && repos.length > 0 && (
+                  <ul>
+                    {repos.map(repo => (
+                      <RepoItem key={repo.id} name={repo.name} description={repo.description || ""} updatedAt={repo.updated_at} />
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </>
           )}
-        </div>
+
       </div>
     </div>
   )
 }
 
 export default ModalUser;
+
+const UserInfo: React.FC<{ data: IUserDetail }> = ({ data }) => {
+  return (
+    <div>
+      <div className="flex gap-3">
+        <img src={data.avatar_url || ""} alt={data.avatar_url || ""} className="aspect-square object-cover w-12 h-12" />
+        <div>
+          <h1 className="font-semibold">{data.name}</h1>
+          <p>{data.bio}</p>
+        </div>
+      </div>
+      <div className="flex justify-between mt-4">
+        <IconText icon="mingcute:location-line" text={data.location || "N/A"} />
+        <div className="flex gap-4">
+          <IconText icon="meteor-icons:bookmark-alt" text={data.public_repos || 0} />
+          <IconText icon="mynaui:users" text={data.followers || 0} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const UserInfoLoading: React.FC = () => {
+  return (
+    <div>
+      <div className="flex gap-3">
+        <Skeleton className="w-12 h-12" />
+        <div>
+          <Skeleton className="w-32 h-4" />
+          <Skeleton className="w-32 h-2 mt-2" />
+        </div>
+      </div>
+      <div className="flex justify-between mt-4">
+        <Skeleton className="w-18 h-4" />
+        <div className="flex gap-4">
+          <Skeleton className="w-18 h-4" />
+          <Skeleton className="w-18 h-4" />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const IconText: React.FC<{ icon: string; text: string | number }> = ({ icon, text, }) => {
   return (
@@ -89,6 +128,16 @@ const RepoItem: React.FC<{ name: string; description: string; updatedAt: string 
         </div>
         <p className="text-sm text-gray-400">{formatDistanceToNow(new Date(updatedAt))}</p>
       </div>
+    </div>
+  )
+}
+
+const RepoLoading: React.FC = () => {
+  return (
+    <div>
+      {Array.from({ length: 10 }).map((_, index) => (
+        <Skeleton key={index} className="w-full h-24 mb-2" />
+      ))}
     </div>
   )
 }
