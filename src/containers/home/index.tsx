@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/ui/logo';
 import Skeleton from '@/components/ui/skeleton';
-import { NO_DATA } from '@/constants/negative-case';
+import { ERROR, NO_DATA } from '@/constants/negative-case';
 import { useState } from 'react';
 import ItemUser from './fragments/item-user';
 import ModalUser from './fragments/modal-user';
@@ -18,7 +18,9 @@ const Home = () => {
     hasNextPage,
     fetchNextPage,
     handleSubmit,
-    totalCount
+    totalCount,
+    isError,
+    refetch
   } = useActions();
 
   return (
@@ -39,7 +41,16 @@ const Home = () => {
             <ItemUser key={user.id} data={user} onClick={() => setSelectedUser(user.login)} />
           ))}
         </div>
-        {!isFetching && allItems.length === 0 && username &&
+        {isError && (
+          <NegativeCase
+            title={ERROR.title}
+            subtitle={ERROR.subtitle}
+            image={ERROR.image}
+            onRefresh={() => refetch()}
+
+          />
+        )}
+        {!isFetching && !isError && allItems.length === 0 && username &&
           <NegativeCase
             title={NO_DATA.title}
             subtitle={NO_DATA.subtitle}

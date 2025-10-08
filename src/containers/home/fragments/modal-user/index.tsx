@@ -4,7 +4,7 @@ import Skeleton from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "@/lib/date";
 import { UserServices } from "@/services/users";
 import type { IUserDetail } from "@/types/users";
-import { NO_DATA } from "@/constants/negative-case";
+import { ERROR, NO_DATA } from "@/constants/negative-case";
 import { NegativeCase } from "@/components/fragments/negative-case";
 
 const ModalUser: React.FC<{
@@ -12,13 +12,13 @@ const ModalUser: React.FC<{
   onClose: () => void;
 }> = ({ login, onClose }) => {
 
-  const { data, isPending } = useQuery({
+  const { data, isPending, isError, refetch } = useQuery({
     queryKey: [UserServices.getUserDetail.key, login],
     queryFn: () => UserServices.getUserDetail.call(login),
     enabled: !!login
   })
 
-  const { data: repos, isPending: isPendingRepos } = useQuery({
+  const { data: repos, isPending: isPendingRepos, isError: isErrorRepos } = useQuery({
     queryKey: [UserServices.getUserRepos.key, login],
     queryFn: () => UserServices.getUserRepos.call(login),
     enabled: !!login
@@ -28,34 +28,48 @@ const ModalUser: React.FC<{
     <div className="fixed bottom-0 left-0 w-full h-full bg-[rgba(0,0,0,0.3)] z-30 flex items-end backdrop-blur-sm">
       <div className="bg-white rounded-t-2xl p-4 pt-16 h-[80vh] w-full overflow-y-hidden relative container mx-auto flex flex-col overflow-hidden">
         <Icon icon="material-symbols:close" width={16} height={16} className="absolute top-4 right-4 p-2 rounded-full cursor-pointer" onClick={() => onClose()} />
-        {!data ? <NegativeCase
+        {isError && (
+          <NegativeCase
+            title={ERROR.title}
+            subtitle={ERROR.subtitle}
+            image={ERROR.image}
+            onRefresh={() => refetch()}
+          />
+        )}
+        {!data && !isError && !isPendingRepos && <NegativeCase
           title={NO_DATA.title}
           subtitle={NO_DATA.subtitle}
           image={NO_DATA.image}
-        />
-          : (
-            <>
-              {isPending ? <UserInfoLoading /> : <UserInfo data={data} />}
-              <p className="mt-24 text-sm">Repositories</p>
-              <div className="flex-1 overflow-y-auto my-8">
-                {isPendingRepos && <RepoLoading />}
-                {repos && repos.length === 0 &&
-                  <NegativeCase
-                    title={NO_DATA.title}
-                    subtitle={NO_DATA.subtitle}
-                    image={NO_DATA.image}
-                  />}
-                {repos && repos.length > 0 && (
-                  <ul>
-                    {repos.map(repo => (
-                      <RepoItem key={repo.id} name={repo.name} description={repo.description || ""} updatedAt={repo.updated_at} />
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </>
-          )}
+        />}
 
+        {!!data && !isError && !isPendingRepos && (
+          <>
+            {isPending ? <UserInfoLoading /> : <UserInfo data={data!} />}
+            <p className="mt-24 text-sm">Repositories</p>
+            <div className="flex-1 overflow-y-auto my-8">
+              {isPendingRepos && <RepoLoading />}
+              {isErrorRepos && <NegativeCase
+                title={ERROR.title}
+                subtitle={ERROR.subtitle}
+                image={ERROR.image}
+                onRefresh={() => refetch()}
+              />}
+              {repos && !isErrorRepos && !isPendingRepos && repos.length === 0 &&
+                <NegativeCase
+                  title={NO_DATA.title}
+                  subtitle={NO_DATA.subtitle}
+                  image={NO_DATA.image}
+                />}
+              {repos && repos.length > 0 && (
+                <ul>
+                  {repos.map(repo => (
+                    <RepoItem key={repo.id} name={repo.name} description={repo.description || ""} updatedAt={repo.updated_at} />
+                  ))}
+                </ul>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

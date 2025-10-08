@@ -14,7 +14,7 @@ export const useActions = () => {
     setSearchId(prev => prev + 1);
   }
 
-  const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage, isFetching, isError, refetch } = useInfiniteQuery({
     queryKey: [UserServices.getUsers.key, username, searchId],
     queryFn: ({ queryKey, pageParam = 1 }) => {
       const [, username] = queryKey as [string, string];
@@ -49,6 +49,8 @@ export const useActions = () => {
     fetchNextPage,
     hasNextPage,
     isFetching,
-    totalCount
+    totalCount,
+    isError,
+    refetch
   }
 }
