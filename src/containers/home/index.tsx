@@ -1,4 +1,5 @@
 import { NegativeCase } from '@/components/fragments/negative-case';
+import { ToggleTheme } from '@/components/fragments/toggle-theme';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/ui/logo';
@@ -23,20 +24,24 @@ const Home = () => {
     refetch
   } = useActions();
 
+
   return (
     <>
-      <div className='pt-14 pb-4 px-4 flex flex-col gap-3 border-b border-gray-200 '>
+      <div className='p4 flex flex-col gap-3 border-b border-muted '>
         <div className="container mx-auto p-4">
-          <Logo />
+          <div className="flex items-center justify-between mb-14">
+            <Logo />
+            <ToggleTheme />
+          </div>
           <form onSubmit={handleSubmit} className='flex items-center gap-2 mt-2'>
             <Input icon='iconamoon:search-light' placeholder='Ex: Justin bieber' />
             <Button>Submit</Button>
           </form>
-          {totalCount > 0 && <p className='text-xs text-gray-500 text-right mt-4'>Total users found: {totalCount}</p>}
+          {totalCount > 0 && <p className='text-xs text-foreground text-right mt-4'>Users found: {totalCount}</p>}
         </div>
       </div>
       <div className='container mt-4 mx-auto p-4'>
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4'>
           {allItems.map((user) => (
             <ItemUser key={user.id} data={user} onClick={() => setSelectedUser(user.login)} />
           ))}
@@ -57,11 +62,13 @@ const Home = () => {
             image={NO_DATA.image}
           />}
         {hasNextPage && !isFetching && (
-          <button onClick={() => fetchNextPage()}>Load More</button>
+          <div className='text-center mt-8'>
+            <Button variant="link" onClick={() => fetchNextPage()}>Load More</Button>
+          </div>
         )}
         {isFetching && <LoadingPlaceholder />}
         {selectedUser && <ModalUser login={selectedUser} onClose={() => setSelectedUser(null)} />}
-      </div>
+      </div >
     </>
   )
 }
@@ -69,7 +76,7 @@ const Home = () => {
 
 const LoadingPlaceholder = () => {
   return (
-    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
+    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-4'>
       {Array.from({ length: 10 }).map((_, index) => (
         <Skeleton key={index} className="w-full h-48" />
       ))}

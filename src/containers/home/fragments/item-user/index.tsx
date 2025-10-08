@@ -9,7 +9,7 @@ const ItemUser: React.FC<{
 
   return (
     <div
-      className="flex flex-col items-center justify-center gap-4 p-2 border border-gray-200 rounded cursor-pointer hover:bg-gray-100"
+      className="flex flex-col items-center justify-center gap-4 p-2 border border-muted rounded cursor-pointer hover:border-2"
       onClick={() => {
         setToggle(!toggle)
         onClick()

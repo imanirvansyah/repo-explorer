@@ -2,7 +2,7 @@ import { callIApi } from "../helpers/api";
 import type { IResponseUsers, IUserDetail, IUserRepo } from "../types/users";
 
 const getUsers = async (username: string, page: number) => {
-  const response = await callIApi.get<IResponseUsers>(`/search/users?q=${username}&per_page=5&page=${page}`);
+  const response = await callIApi.get<IResponseUsers>(`/search/users?q=${username}&per_page=6&page=${page}`);
   return response.data;
 };
 const getUserDetail = async (username: string) => {
