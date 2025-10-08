@@ -53,7 +53,7 @@ export interface IUserRepo {
   "private": boolean,
   "owner": IUser,
   "html_url": string,
-  "description": null,
+  "description": string | null,
   "fork": boolean,
   "url": string,
   "forks_url": string,

@@ -8,14 +8,14 @@ const ItemUser: React.FC<{
   const [toggle, setToggle] = useState(false);
 
   return (
-    <div style={{
-      cursor: "pointer"
-    }}
+    <div
+      className="flex flex-col items-center justify-center gap-4 p-2 border border-gray-200 rounded cursor-pointer hover:bg-gray-100"
       onClick={() => {
         setToggle(!toggle)
         onClick()
       }}
     >
+      <img src={data.avatar_url || ""} alt={data.avatar_url || "avatar image"} width={150} height={150} className="object-cover w-full" />
       <p>{data.login}</p>
     </div >
   )
