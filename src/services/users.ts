@@ -9,8 +9,8 @@ const getUserDetail = async (username: string) => {
   const response = await callIApi.get<IUserDetail>(`/users/${username}`);
   return response.data;
 }
-const getUserRepos = async (username: string) => {
-  const response = await callIApi.get<IUserRepo[]>(`/users/${username}/repos`);
+const getUserRepos = async (username: string, page: number) => {
+  const response = await callIApi.get<IUserRepo[]>(`/users/${username}/repos?page=${page}`);
   return response.data;
 };
 

@@ -22,7 +22,7 @@ export const useActions = () => {
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const maxPages = Math.ceil(lastPage.total_count / 5);
+      const maxPages = Math.ceil(lastPage.total_count / 6);
       const nextPage = allPages.length + 1;
       return nextPage <= maxPages ? nextPage : undefined;
     },
