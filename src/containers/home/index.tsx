@@ -40,6 +40,11 @@ const Home = () => {
         </div>
       </div>
       <div className='container mt-4 mx-auto p-4'>
+        {allItems.length === 0 && !username && (
+          <div className="flex items-center justify-center h-[50vh] ">
+            <h1 className='text-7xl md:text-9xl text-center'>Let’s discover <br />some <span className='text-primary'>devs!</span></h1>
+          </div>
+        )}
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4'>
           {allItems.map((user) => (
             <ItemUser key={user.id} data={user} onClick={() => setSelectedUser(user.login)} />
